@@ -3,8 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { VisualNovelsModule } from './visual-novels/visual-novels.module';
 import { ConfigModule } from '@nestjs/config';
 import { VisualNovel } from './visual-novels/visual-novel.entity';
+import { User } from './users/user.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,15 +17,16 @@ import { join } from 'path';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      synchronize: false, // Set to false in production
-      ssl: { rejectUnauthorized: false }, // If SSL is required for Supabase
-      entities: [VisualNovel],
+      synchronize: false,
+      ssl: { rejectUnauthorized: false },
+      entities: [VisualNovel, User],
     }),
     VisualNovelsModule,
-    // ServeStaticModule to serve static files (like images)
+    UsersModule,
+    AuthModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'), // Path to your 'upload' directory
-      serveRoot: '/uploads', // URL path prefix for the images (e.g., http://localhost:8000/uploads)
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
   ],
 })
