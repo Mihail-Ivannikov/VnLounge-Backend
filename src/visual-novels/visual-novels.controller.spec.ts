@@ -11,7 +11,7 @@ const mockVisualNovel = {
   rating: 4.5,
   image_url: 'http://example.com/image.jpg',
   author: 'Test Author',
-  duration: 10, // Corrected to number
+  duration: 10,
   description: 'A test visual novel',
   torrent_url: 'http://example.com/torrent',
 };
@@ -68,7 +68,7 @@ describe('VisualNovelsController', () => {
       rating: 4.5,
       image_url: 'http://example.com/image.jpg',
       author: 'Test Author',
-      duration: 10, // Corrected to number
+      duration: 10,
       description: 'A test visual novel',
       torrent_url: 'http://example.com/torrent',
     };
