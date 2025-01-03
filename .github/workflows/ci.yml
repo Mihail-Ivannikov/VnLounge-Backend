@@ -1,42 +1,35 @@
-name: CI
+name: CI for NestJS Project
 
 on:
-  pull_request:
+  push:
     branches:
       - '*'
-  push:
+  pull_request:
     branches:
       - '*'
 
 jobs:
-  lint-test-build:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '23.3.0'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run ESLint
-        run: npx eslint . --ext .js,.jsx,.ts,.tsx
-
-      - name: Run Prettier check
-        run: npx prettier --check .
+      - name: Lint code
+        run: npm run lint
 
       - name: Run tests
-        run: npm test -- --watchAll=false
+        run: npm test
 
       - name: Build project
         run: npm run build
-
-      - name: Commit message check
-        uses: amannn/action-semantic-pull-request@v2
-        with:
-          title: 'true'
-          body: 'true'
