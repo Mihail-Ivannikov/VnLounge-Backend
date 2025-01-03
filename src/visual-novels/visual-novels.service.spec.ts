@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { VisualNovel } from './visual-novel.entity';
 import { CreateVisualNovelDto } from './dto/create-visual-novel.dto';
-import { UpdateVisualNovelDto } from './dto/update-visual-novel.dto';
 
 const mockVisualNovel: VisualNovel = {
   id: 1,
