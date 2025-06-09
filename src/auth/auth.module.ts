@@ -11,9 +11,11 @@ import { GoogleOAuthAdapter } from './adapters/google-oauth.adapter';
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '60m' },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: '60m' },
+      }),
     }),
     UsersModule,
   ],
