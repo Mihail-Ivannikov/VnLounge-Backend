@@ -8,16 +8,15 @@ export class GoogleOAuthAdapter implements IOAuthProvider {
 
   constructor() {
     this.googleClient = new OAuth2Client(
-      'process.env.GOOGLE_CLIENT_ID',
-      'process.env.GOOGLE_CLIENT_SECRET',
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
     );
   }
 
   async verifyToken(token: string): Promise<any> {
     const ticket = await this.googleClient.verifyIdToken({
       idToken: token,
-      audience:
-        'process.env.GOOGLE_CLIENT_ID',
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();

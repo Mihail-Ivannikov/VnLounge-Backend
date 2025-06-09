@@ -13,7 +13,7 @@ import { IOAuthProvider } from './adapters/oauth-provider.interface';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'process.env.JWT_SECRET',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '60m' },
     }),
     UsersModule,
