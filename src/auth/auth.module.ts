@@ -7,7 +7,6 @@ import { GoogleStrategy } from './strategies/google-auth.strategy';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { GoogleOAuthAdapter } from './adapters/google-oauth.adapter';
-import { IOAuthProvider } from './adapters/oauth-provider.interface';
 
 @Module({
   imports: [
