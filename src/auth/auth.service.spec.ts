@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { OAuth2Client } from 'google-auth-library';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -18,8 +17,9 @@ describe('AuthService', () => {
     sign: jest.fn(),
   };
 
-  const mockGoogleClient = {
-    verifyIdToken: jest.fn(),
+  // Create a mock for the IOAuthProvider with proper Promise support
+  const mockOAuthProvider = {
+    verifyToken: jest.fn().mockImplementation(() => Promise.resolve()),
   };
 
   const mockUser = {
@@ -43,8 +43,8 @@ describe('AuthService', () => {
           useValue: mockJwtService,
         },
         {
-          provide: OAuth2Client,
-          useValue: mockGoogleClient,
+          provide: 'IOAuthProvider',
+          useValue: mockOAuthProvider,
         },
       ],
     }).compile();
@@ -118,6 +118,33 @@ describe('AuthService', () => {
         email: 'test@example.com',
         sub: 1,
       });
+    });
+  });
+
+  describe('verifyGoogleToken', () => {
+    it('should verify token and validate Google user', async () => {
+      const token = 'google-token';
+      const userData = {
+        id: 'google123',
+        email: 'test@example.com',
+        name: 'testuser',
+      };
+
+      // Use mockResolvedValueOnce instead of mockResolvedValue
+      mockOAuthProvider.verifyToken.mockResolvedValueOnce(userData);
+
+      // Mock the validateGoogleUser method
+      jest.spyOn(service, 'validateGoogleUser').mockResolvedValue(mockUser);
+
+      const result = await service.verifyGoogleToken(token);
+
+      expect(mockOAuthProvider.verifyToken).toHaveBeenCalledWith(token);
+      expect(service.validateGoogleUser).toHaveBeenCalledWith(
+        userData.id,
+        userData.email,
+        userData.name,
+      );
+      expect(result).toEqual(mockUser);
     });
   });
 });
