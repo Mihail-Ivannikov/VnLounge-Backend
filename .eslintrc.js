@@ -1,25 +1,26 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    project: 'tsconfig.json',
-    tsconfigRootDir: __dirname,
-    sourceType: 'module',
-  },
-  plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-  ],
   root: true,
-  env: {
-    node: true,
-    jest: true,
+  parser: '@typescript-eslint/parser', // Specifies the TypeScript parser
+  parserOptions: {
+    ecmaVersion: 2020, // Allows for modern ECMAScript features
+    sourceType: 'module', // Allows for the use of imports
   },
-  ignorePatterns: ['.eslintrc.js'],
+  env: {
+    node: true, // Enables Node.js global variables and Node.js scoping
+    es6: true, // Enables ES6 global variables
+  },
+  extends: [
+    'eslint:recommended', // Use recommended rules from ESLint
+    'plugin:@typescript-eslint/recommended', // Use recommended rules from the TypeScript plugin
+    'prettier', // Disables rules that conflict with Prettier
+  ],
+  plugins: [
+    '@typescript-eslint', // Adds TypeScript-specific linting rules
+  ],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    // Custom rules can be added here
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }], // Ignore unused variables prefixed with _
+    '@typescript-eslint/explicit-function-return-type': 'off', // Disable requirement for explicit return types
     '@typescript-eslint/no-explicit-any': 'off',
   },
 };
