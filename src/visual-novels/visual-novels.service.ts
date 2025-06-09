@@ -1,55 +1,49 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { VisualNovel } from './visual-novel.entity';
 import { CreateVisualNovelDto } from './dto/create-visual-novel.dto';
 import { UpdateVisualNovelDto } from './dto/update-visual-novel.dto';
+import { IVisualNovelRepository } from './repositories/visual-novel.repository.interface';
 
 @Injectable()
 export class VisualNovelsService {
   constructor(
-    @InjectRepository(VisualNovel)
-    private visualNovelsRepository: Repository<VisualNovel>,
+    @Inject('IVisualNovelRepository') private visualNovelRepository: IVisualNovelRepository,
   ) {}
 
   async findAll(filters?: {
     genre?: string;
     type?: string;
   }): Promise<VisualNovel[]> {
-    const query = this.visualNovelsRepository.createQueryBuilder('novel');
-
-    if (filters?.genre) {
-      query.andWhere('novel.genre = :genre', { genre: filters.genre });
-    }
-
-    if (filters?.type) {
-      query.andWhere('novel.type = :type', { type: filters.type });
-    }
-
-    return await query.getMany();
+    return this.visualNovelRepository.findAll(filters);
   }
 
   async findOne(id: number): Promise<VisualNovel> {
-    return this.visualNovelsRepository.findOne({ where: { id } });
+    return this.visualNovelRepository.findOne(id);
   }
 
   async create(
     createVisualNovelDto: CreateVisualNovelDto,
   ): Promise<VisualNovel> {
-    const visualNovel =
-      this.visualNovelsRepository.create(createVisualNovelDto);
-    return await this.visualNovelsRepository.save(visualNovel);
+    return this.visualNovelRepository.create(createVisualNovelDto);
   }
 
   async update(
     id: number,
     updateVisualNovelDto: UpdateVisualNovelDto,
   ): Promise<VisualNovel> {
-    await this.visualNovelsRepository.update(id, updateVisualNovelDto);
-    return this.findOne(id);
+    return this.visualNovelRepository.update(id, updateVisualNovelDto);
   }
 
   async remove(id: number): Promise<void> {
-    await this.visualNovelsRepository.delete(id);
+    await this.visualNovelRepository.remove(id);
+  }
+
+  // New methods using the repository
+  async findByGenre(genre: string): Promise<VisualNovel[]> {
+    return this.visualNovelRepository.findByGenre(genre);
+  }
+
+  async findByRating(minRating: number): Promise<VisualNovel[]> {
+    return this.visualNovelRepository.findByRating(minRating);
   }
 }

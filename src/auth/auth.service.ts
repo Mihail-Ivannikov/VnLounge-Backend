@@ -1,19 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { OAuth2Client } from 'google-auth-library';
+import { IOAuthProvider } from './adapters/oauth-provider.interface';
 
 @Injectable()
 export class AuthService {
-  private googleClient = new OAuth2Client(
-    'process.env.GOOGLE_CLIENT_ID',
-    'process.env.GOOGLE_CLIENT_SECRET',
-  );
-
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    @Inject('IOAuthProvider') private googleOAuthProvider: IOAuthProvider,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -53,15 +49,7 @@ export class AuthService {
   }
 
   async verifyGoogleToken(token: string): Promise<any> {
-    const ticket = await this.googleClient.verifyIdToken({
-      idToken: token,
-      audience:
-        'process.env.GOOGLE_CLIENT_ID',
-    });
-
-    const payload = ticket.getPayload();
-    const { sub, email, name } = payload;
-
-    return this.validateGoogleUser(sub, email, name);
+    const userData = await this.googleOAuthProvider.verifyToken(token);
+    return this.validateGoogleUser(userData.id, userData.email, userData.name);
   }
 }
